@@ -11,16 +11,29 @@
     <meta name="apple-mobile-web-app-title" content="Red Card">
     <meta name="application-name" content="Red Card">
 
-    <!-- App Icon (White Background, Red Card Center) -->
-    <!-- Using URL-encoded SVG for maximum compatibility -->
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='white'/%3E%3Crect x='146' y='96' width='220' height='320' rx='30' fill='%23ef4444'/%3E%3Cpath d='M146 96 h220 v320 h-220 z' fill='url(%23g)' opacity='0.1'/%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='white' stop-opacity='0.5'/%3E%3Cstop offset='1' stop-color='black' stop-opacity='0.1'/%3E%3C/linearGradient%3E%3C/svg%3E">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='white'/%3E%3Crect x='146' y='96' width='220' height='320' rx='30' fill='%23ef4444'/%3E%3C/svg%3E">
+    <!-- App Icons (White Background, Red Card Center) -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0id2hpdGUiLz48cmVjdCB4PSIxNDYiIHk9Ijk2IiB3aWR0aD0iMjIwIiBoZWlnaHQ9IjMyMCIgcng9IjMwIiBmaWxsPSIjZWY0NDQ0Ii8+PC9zdmc+">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0id2hpdGUiLz48cmVjdCB4PSIxNDYiIHk9Ijk2IiB3aWR0aD0iMjIwIiBoZWlnaHQ9IjMyMCIgcng9IjMwIiBmaWxsPSIjZWY0NDQ0Ii8+PC9zdmc+">
+
+    <!-- PWA Manifest (Embedded safely) -->
+    <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiUmVkIENhcmQiLCJzaG9ydF9uYW1lIjoiUmVkIENhcmQiLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzE4MTgxYiIsInRoZW1lX2NvbG9yIjoiIzE4MTgxYiIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTVMTXk1dmNtY3ZNakF3TUM5emRtY2lJSFpwWlhkQ2IzZ3lOQ0EwSURVeE1pQTFNVElpUGp4eVpXTjBJRGQ1WkhSb0xUVXhNaUJoWldGbmFIUTlJakV4TWlJZ2ZtbHNiRDBpSTJaZmZtWm1aaUl2UGp4eVpXTjBJSGc5SWpFME5pSWdlVDBpT1RZaUlIZHBaSFJvUFNJeU1qQWlJR2hsYVdkb2RDMHpNakFpSUhKNExTSXpNQ0lpSUdadmJHdzlJaTVsWmpRME5EUWlMMzQ4TDNOMlp6ND0iLCJzaXplcyI6IjUxMng1MTIiLCJ0eXBlIjoiaW1hZ2Uvc3ZnK3htbCJ9XX0=">
 
     <title>Red Card</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+
+    <!-- CLEANUP SCRIPT: Fixes 404s by deleting old broken Service Workers -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let registration of registrations) {
+                    registration.unregister();
+                }
+            });
+        }
+    </script>
 
     <style>
         /* Core Styling */
@@ -430,7 +443,6 @@
         window.onload = () => {
             setTimeout(() => { 
                 splashScreen.classList.add('splash-fade-out'); 
-                // Safety check: ensure splash actually disappears if CSS transition fails or hangs
                 setTimeout(() => splashScreen.style.display = 'none', 1000); 
             }, 1500);
             updateCardDisplay();
