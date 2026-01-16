@@ -24,13 +24,15 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 
-    <!-- CLEANUP SCRIPT: Fixes 404s by deleting old broken Service Workers -->
+    <!-- CLEANUP SCRIPT: Fixes 404s by deleting old broken Service Workers (With Error Handling) -->
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistrations().then(function(registrations) {
                 for(let registration of registrations) {
                     registration.unregister();
                 }
+            }).catch(function(err) {
+                console.warn('Service Worker cleanup skipped (expected in preview environments):', err);
             });
         }
     </script>
@@ -728,5 +730,3 @@
     </script>
 </body>
 </html>
-
-
