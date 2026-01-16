@@ -4,26 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <!-- iOS PWA Optimization & Icon Settings -->
+    <!-- PWA Settings -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#18181b">
-    
-    <!-- This sets the name under the icon on the Home Screen -->
     <meta name="apple-mobile-web-app-title" content="Red Card">
-    
-    <!-- Generated App Icon (White background with Red Card) -->
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23ffffff'/%3E%3Crect x='146' y='96' width='220' height='320' rx='30' fill='%23ef4444'/%3E%3Cpath d='M146 96 h220 v320 h-220 z' fill='url(%23g)' opacity='0.1'/%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='white' stop-opacity='0.5'/%3E%3Cstop offset='100%25' stop-color='black' stop-opacity='0.1'/%3E%3C/linearGradient%3E%3C/svg%3E">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23ffffff'/%3E%3Crect x='146' y='96' width='220' height='320' rx='30' fill='%23ef4444'/%3E%3C/svg%3E">
+    <meta name="application-name" content="Red Card">
+
+    <!-- Embedded App Icon (White Background, Red Card Center) -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iI2ZmZmZmZiIvPjxyZWN0IHg9IjE0NiIgeT0iOTYiIHdpZHRoPSIyMjAiIGhlaWdodD0iMzIwIiByeD0iMzAiIGZpbGw9IiNlZjQ0NDQiLz48L3N2Zz4=">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iI2ZmZmZmZiIvPjxyZWN0IHg9IjE0NiIgeT0iOTYiIHdpZHRoPSIyMjAiIGhlaWdodD0iMzIwIiByeD0iMzAiIGZpbGw9IiNlZjQ0NDQiLz48L3N2Zz4=">
+
+    <!-- PWA Manifest (Embedded) -->
+    <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiUmVkIENhcmQiLCJzaG9ydF9uYW1lIjoiUmVkIENhcmQiLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzE4MTgxYiIsInRoZW1lX2NvbG9yIjoiIzE4MTgxYiIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTVMTXk1dmNtY3ZNakF3TUM5emRtY2lJSFpwWlhkQ2IzZ3lOQ0EwSURVeE1pQTFNVElpUGp4eVpXTjBJRGQ1WkhSb0xUVXhNaUJoWldGbmFIUTlJakV4TWlJZ2ZtbHNiRDBpSTJaZmZtWm1aaUl2UGp4eVpXTjBJSGc5SWpFME5pSWdlVDBpT1RZaUlIZHBaSFJvUFNJeU1qQWlJR2hsYVdkb2RDMHpNakFpSUhKNExTSXpNQ0lpSUdadmJHdzlJaTVsWmpRME5EUWlMMzQ4TDNOMlp6ND0iLCJzaXplcyI6IjUxMng1MTIiLCJ0eXBlIjoiaW1hZ2Uvc3ZnK3htbCJ9XX0=">
 
     <title>Red Card</title>
+    
+    <!-- Dependencies (Cached via Service Worker for Offline Use) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Orbitron for thicker digital font -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 
+    <!-- Offline Service Worker Loader -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            const swCode = `
+                const CACHE_NAME = 'red-card-v2';
+                const urlsToCache = [
+                    location.href,
+                    'https://cdn.tailwindcss.com',
+                    'https://unpkg.com/lucide@latest',
+                    'https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap'
+                ];
+                self.addEventListener('install', event => {
+                    self.skipWaiting();
+                    event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)));
+                });
+                self.addEventListener('fetch', event => {
+                    event.respondWith(caches.match(event.request).then(response => response || fetch(event.request)));
+                });
+            `;
+            const blob = new Blob([swCode], {type: 'application/javascript'});
+            navigator.serviceWorker.register(URL.createObjectURL(blob))
+                .catch(err => console.log('SW fail', err));
+        }
+    </script>
+
     <style>
-        /* Core App Styling */
         body {
             user-select: none;
             -webkit-user-select: none;
@@ -33,12 +60,10 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
         
-        /* Smooth color transition for the background */
         #card-display {
             transition: background-color 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* UI Fade Transition for Match Manager */
         #blue-ui {
             transition: opacity 0.3s ease-out, visibility 0.3s linear;
             opacity: 0;
@@ -53,7 +78,6 @@
             transition-delay: 0.1s;
         }
 
-        /* Splash Screen */
         .splash-fade-out {
             opacity: 0;
             visibility: hidden;
@@ -68,8 +92,6 @@
         .logo-card {
             animation: float 3s ease-in-out infinite;
         }
-
-        /* --- Scoreboard Specific Styling --- */
 
         .font-digital {
             font-family: 'Orbitron', sans-serif;
@@ -97,7 +119,6 @@
             pointer-events: none;
         }
 
-        /* Buttons */
         .btn-premium {
             box-shadow: 
                 0 4px 6px -1px rgba(0, 0, 0, 0.3), 
@@ -149,50 +170,33 @@
             box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
         }
 
-        /* LIGHT MODE OVERRIDES */
+        /* LIGHT MODE */
         #blue-ui.light-mode .glass-input {
             background: rgba(255, 255, 255, 0.6);
             border: 1px solid rgba(0, 0, 0, 0.1);
-            color: #1f2937; /* Gray-800 */
+            color: #1f2937;
         }
         #blue-ui.light-mode .glass-input:focus {
             background: #ffffff;
             border-color: #3b82f6;
             box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
         }
-        
-        #blue-ui.light-mode #setup-header h2 {
-            color: #4b5563; /* Gray-600 */
-        }
-        #blue-ui.light-mode #setup-timer-display {
-            color: #111827; /* Gray-900 */
-        }
-        
-        /* Light Mode Buttons */
+        #blue-ui.light-mode #setup-header h2 { color: #4b5563; }
+        #blue-ui.light-mode #setup-timer-display { color: #111827; }
         #blue-ui.light-mode #edit-btn, 
         #blue-ui.light-mode #theme-btn {
-            background-color: #e2e8f0; /* Slate-200 */
-            border-color: #cbd5e1; /* Slate-300 */
-            color: #475569; /* Slate-600 */
+            background-color: #e2e8f0;
+            border-color: #cbd5e1;
+            color: #475569;
         }
-        #blue-ui.light-mode #edit-btn:hover,
-        #blue-ui.light-mode #theme-btn:hover {
-            color: #0f172a;
-            background-color: #cbd5e1;
-        }
-
         #blue-ui.light-mode .logo-upload-preview {
             border-color: rgba(0,0,0,0.2);
             background-color: rgba(0,0,0,0.05);
         }
-        #blue-ui.light-mode .logo-upload-preview i {
-            color: rgba(0,0,0,0.4);
-        }
-
+        #blue-ui.light-mode .logo-upload-preview i { color: rgba(0,0,0,0.4); }
 
         .hidden-ui { display: none !important; }
 
-        /* Logo Upload Button (Circle + Plus) */
         .logo-upload-preview {
             width: 72px; 
             height: 72px; 
@@ -211,11 +215,7 @@
             background-color: rgba(255,255,255,0.15);
             border-color: white;
         }
-        .logo-upload-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        .logo-upload-preview img { width: 100%; height: 100%; object-fit: cover; }
         
         .scoreboard-logo {
             width: 72px; 
@@ -232,29 +232,21 @@
             transition: all 0.15s ease-out;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
-        .btn-goal:active {
-            transform: scale(0.95);
-        }
-        .btn-goal-home {
-            border-color: rgba(59, 130, 246, 0.5); /* Blue */
-        }
+        .btn-goal:active { transform: scale(0.95); }
+        .btn-goal-home { border-color: rgba(59, 130, 246, 0.5); }
         .btn-goal-home:active {
             background: rgba(59, 130, 246, 0.2);
             border-color: #3b82f6;
             box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
         }
-        .btn-goal-away {
-            border-color: rgba(239, 68, 68, 0.5); /* Red */
-        }
+        .btn-goal-away { border-color: rgba(239, 68, 68, 0.5); }
         .btn-goal-away:active {
             background: rgba(239, 68, 68, 0.2);
             border-color: #ef4444;
             box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
         }
 
-        #cropper-modal {
-            touch-action: none; 
-        }
+        #cropper-modal { touch-action: none; }
     </style>
 </head>
 <body class="bg-gray-900 h-screen w-screen overflow-hidden flex flex-col font-sans">
@@ -270,23 +262,16 @@
         </div>
     </div>
 
-    <!-- Image Cropper Modal -->
+    <!-- Image Cropper -->
     <div id="cropper-modal" class="fixed inset-0 z-[200] bg-black flex flex-col hidden-ui" onclick="stopProp(event)">
-        <!-- Top Bar -->
         <div class="flex justify-between items-center px-4 py-4 bg-gray-900 border-b border-gray-800 z-10">
             <button onclick="cancelCrop()" class="text-white text-base font-medium px-2 py-1">Cancel</button>
             <h3 class="text-white font-bold text-sm tracking-wide">ADJUST IMAGE</h3>
             <button onclick="saveCrop()" class="text-blue-400 font-bold text-base px-2 py-1">Done</button>
         </div>
-        
-        <!-- Canvas Area -->
         <div class="flex-1 relative bg-neutral-900 overflow-hidden flex items-center justify-center touch-none" id="cropper-container">
             <canvas id="cropper-canvas" class="z-0"></canvas>
-            
-            <!-- Visual Overlay -->
             <div id="cropper-overlay" class="absolute pointer-events-none border-[9999px] border-black/60 z-10 box-content"></div>
-            
-            <!-- Grid Lines -->
             <div id="cropper-grid" class="absolute pointer-events-none border border-white/30 z-20">
                 <div class="absolute top-1/3 w-full h-px bg-white/20"></div>
                 <div class="absolute top-2/3 w-full h-px bg-white/20"></div>
@@ -294,56 +279,45 @@
                 <div class="absolute left-2/3 h-full w-px bg-white/20"></div>
             </div>
         </div>
-        
-        <div class="h-12 bg-gray-900 border-t border-gray-800 flex items-center justify-center text-xs text-gray-400">
-            Pinch to Zoom • Drag to Move
-        </div>
+        <div class="h-12 bg-gray-900 border-t border-gray-800 flex items-center justify-center text-xs text-gray-400">Pinch to Zoom • Drag to Move</div>
     </div>
 
     <!-- Main Card Area -->
     <div id="card-display" class="flex-1 w-full relative cursor-pointer active:brightness-95 bg-red-600 flex flex-col items-center justify-center">
         
-        <!-- BLUE SCREEN / MATCH MANAGER UI -->
         <div id="blue-ui" class="absolute inset-0 w-full h-full p-6 flex flex-col">
             
-            <!-- Header Controls -->
+            <!-- Header -->
             <div class="flex justify-between items-start w-full mb-4 relative z-20">
-                
-                <!-- Left Buttons Stack -->
                 <div class="flex flex-col gap-3">
                     <button id="edit-btn" class="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center btn-premium border border-slate-700 text-slate-300 hover:text-white" onclick="toggleEditMode(event)">
                         <i data-lucide="pencil" class="w-4 h-4"></i>
                     </button>
-                    
-                    <!-- Theme Toggle (Tiny Moon) -->
                     <button id="theme-btn" class="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center btn-premium border border-slate-700 text-slate-300 hover:text-white" onclick="toggleTheme(event)">
                         <i data-lucide="moon" class="w-4 h-4"></i>
                     </button>
                 </div>
                 
-                <!-- Center Title -->
                 <div id="setup-header" class="absolute left-1/2 top-3 -translate-x-1/2 flex flex-col items-center justify-center pointer-events-none">
                     <h2 class="text-white/50 text-sm font-bold tracking-widest uppercase transition-colors">Match Setup</h2>
                     <div id="setup-timer-display" class="font-digital text-white text-xl tracking-wider leading-none mt-1 hidden-ui transition-colors">00:00</div>
                 </div>
 
-                <!-- Right Button -->
                 <button id="confirm-btn" class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center btn-premium text-white" onclick="lockSettings(event)">
                     <i data-lucide="check" class="w-6 h-6"></i>
                 </button>
             </div>
 
-            <!-- SETUP FORM -->
+            <!-- Setup Form -->
             <div id="setup-view" class="flex-1 flex flex-col justify-center space-y-8 max-w-sm mx-auto w-full z-10" onclick="stopProp(event)">
                 
-                <!-- Team 1 Input Row -->
+                <!-- Team 1 -->
                 <div class="flex items-center gap-4">
                     <div class="relative group">
                         <div class="logo-upload-preview" onclick="triggerUpload(1)">
                             <img id="preview-logo-1" class="hidden" src="" alt="Team 1">
                             <i data-lucide="plus" id="icon-logo-1" class="w-8 h-8 text-white/50"></i>
                         </div>
-                        <!-- Remove Button -->
                         <button id="remove-logo-1" class="hidden absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-1 shadow-lg hover:bg-red-600 transition-colors z-20" onclick="removeLogo(event, 1)">
                             <i data-lucide="x" class="w-3 h-3"></i>
                         </button>
@@ -360,14 +334,13 @@
                     </div>
                 </div>
 
-                <!-- Team 2 Input Row -->
+                <!-- Team 2 -->
                 <div class="flex items-center gap-4">
                     <div class="relative group">
                         <div class="logo-upload-preview" onclick="triggerUpload(2)">
                             <img id="preview-logo-2" class="hidden" src="" alt="Team 2">
                             <i data-lucide="plus" id="icon-logo-2" class="w-8 h-8 text-white/50"></i>
                         </div>
-                        <!-- Remove Button -->
                         <button id="remove-logo-2" class="hidden absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-1 shadow-lg hover:bg-red-600 transition-colors z-20" onclick="removeLogo(event, 2)">
                             <i data-lucide="x" class="w-3 h-3"></i>
                         </button>
@@ -384,7 +357,6 @@
                     </div>
                 </div>
                 
-                <!-- Hidden File Inputs -->
                 <input type="file" id="file-input-1" class="hidden" accept="image/*" onchange="handleFileSelect(event, 1)">
                 <input type="file" id="file-input-2" class="hidden" accept="image/*" onchange="handleFileSelect(event, 2)">
 
@@ -409,26 +381,18 @@
                 </div>
             </div>
 
-            <!-- GAME VIEW / SCOREBOARD -->
+            <!-- Game View -->
             <div id="game-view" class="flex-1 flex flex-col hidden-ui z-10 space-y-6">
                 
-                <!-- The "Caged" Scoreboard -->
                 <div class="scoreboard-cage rounded-2xl p-6 flex flex-col items-center justify-center shadow-2xl border-2 border-slate-700 bg-black" onclick="stopProp(event)">
                     
-                    <!-- Scores -->
                     <div class="flex justify-between items-start w-full mb-4">
-                        
-                        <!-- Team 1 Score -->
                         <div class="text-center flex-1 flex flex-col items-center">
                             <img id="score-logo-1" class="scoreboard-logo hidden" src="">
                             <div id="score-team1-name" class="text-blue-400 text-sm font-black tracking-wider uppercase mb-1 truncate px-1 max-w-[120px]">Home</div>
                             <div id="score-team1-val" class="font-digital text-5xl text-blue-400 leading-none mt-1">0</div>
                         </div>
-                        
-                        <!-- VS Divider -->
                         <div class="h-16 w-px bg-slate-800 mx-2 mt-4"></div>
-                        
-                        <!-- Team 2 Score -->
                         <div class="text-center flex-1 flex flex-col items-center">
                             <img id="score-logo-2" class="scoreboard-logo hidden" src="">
                             <div id="score-team2-name" class="text-red-400 text-sm font-black tracking-wider uppercase mb-1 truncate px-1 max-w-[120px]">Away</div>
@@ -436,31 +400,19 @@
                         </div>
                     </div>
 
-                    <!-- Divider -->
                     <div class="w-full h-px bg-slate-800 mb-6"></div>
-
-                    <!-- Timer -->
-                    <div id="timer-display" class="font-digital text-6xl text-white tracking-widest tabular-nums leading-none font-bold">
-                        00:00
-                    </div>
+                    <div id="timer-display" class="font-digital text-6xl text-white tracking-widest tabular-nums leading-none font-bold">00:00</div>
                 </div>
 
-                <!-- Main Action Button -->
                 <div class="flex justify-center py-2" onclick="stopProp(event)">
-                    <button id="go-btn" class="w-20 h-20 rounded-full btn-start flex items-center justify-center transition-all text-white font-black text-xl tracking-widest" onclick="toggleTimer(event)">
-                        GO
-                    </button>
+                    <button id="go-btn" class="w-20 h-20 rounded-full btn-start flex items-center justify-center transition-all text-white font-black text-xl tracking-widest" onclick="toggleTimer(event)">GO</button>
                 </div>
 
-                <!-- Goal Controls (UPDATED) -->
                 <div class="grid grid-cols-2 gap-4 mt-auto" onclick="stopProp(event)">
-                    <!-- Home Goal -->
                     <button class="btn-goal btn-goal-home rounded-2xl h-24 flex flex-col items-center justify-center backdrop-blur-sm" onclick="addGoal(1)">
                         <span class="text-white text-base font-bold tracking-widest mb-1">GOAL</span>
                         <span id="btn-team1-name" class="text-blue-400 text-sm font-medium truncate max-w-[90%] opacity-80">Home</span>
                     </button>
-                    
-                    <!-- Away Goal -->
                     <button class="btn-goal btn-goal-away rounded-2xl h-24 flex flex-col items-center justify-center backdrop-blur-sm" onclick="addGoal(2)">
                         <span class="text-white text-base font-bold tracking-widest mb-1">GOAL</span>
                         <span id="btn-team2-name" class="text-red-400 text-sm font-medium truncate max-w-[90%] opacity-80">Away</span>
@@ -468,46 +420,26 @@
                 </div>
 
             </div>
-
         </div>
-
     </div>
 
     <script>
-        // Initialize Icons
         lucide.createIcons();
 
-        // --- Core App State ---
         let currentAudioContext = null;
         let isWhistling = false;
-        let isDarkMode = true; // Default to Dark Mode
+        let isDarkMode = true;
         
         const cardDisplay = document.getElementById('card-display');
         const splashScreen = document.getElementById('splash-screen');
         const blueUi = document.getElementById('blue-ui');
 
         const getCards = () => ['bg-red-600', 'bg-yellow-400', isDarkMode ? 'bg-zinc-900' : 'bg-gray-100'];
-        let currentCardIndex = 2; // Start at Scoreboard
+        let currentCardIndex = 2;
 
-        // --- Game State ---
-        let gameSettings = {
-            team1: "Home",
-            team2: "Away",
-            team1Logo: null,
-            team2Logo: null,
-            matchTime: 45,
-            halfTime: 15,
-            locked: false
-        };
-        let gameState = {
-            team1Score: 0,
-            team2Score: 0,
-            timeRemaining: 45 * 60,
-            isRunning: false,
-            timerInterval: null
-        };
+        let gameSettings = { team1: "Home", team2: "Away", team1Logo: null, team2Logo: null, matchTime: 45, halfTime: 15, locked: false };
+        let gameState = { team1Score: 0, team2Score: 0, timeRemaining: 45 * 60, isRunning: false, timerInterval: null };
 
-        // --- DOM Elements ---
         const setupView = document.getElementById('setup-view');
         const gameView = document.getElementById('game-view');
         const confirmBtn = document.getElementById('confirm-btn');
@@ -518,21 +450,16 @@
         const themeBtn = document.getElementById('theme-btn');
 
         window.onload = () => {
-            setTimeout(() => {
-                splashScreen.classList.add('splash-fade-out');
-            }, 1500);
+            setTimeout(() => { splashScreen.classList.add('splash-fade-out'); }, 1500);
             updateCardDisplay();
             updateUI();
         };
 
         function stopProp(e) { e.stopPropagation(); }
         
-        // --- THEME LOGIC ---
         function toggleTheme(e) {
             if(e) e.stopPropagation();
             isDarkMode = !isDarkMode;
-            
-            // Update UI class
             if(isDarkMode) {
                 blueUi.classList.remove('light-mode');
                 themeBtn.innerHTML = '<i data-lucide="moon" class="w-4 h-4"></i>';
@@ -544,50 +471,26 @@
             updateCardDisplay();
         }
 
-        // --- LOGO HANDLING (Crop & Remove) ---
         const cropperModal = document.getElementById('cropper-modal');
         const cropperCanvas = document.getElementById('cropper-canvas');
         const cropperOverlay = document.getElementById('cropper-overlay');
         const cropperGrid = document.getElementById('cropper-grid');
         let cropperCtx = cropperCanvas.getContext('2d');
         
-        let cropState = {
-            img: null,
-            currentTeam: null,
-            viewW: 0, viewH: 0,
-            x: 0, y: 0, scale: 1,
-            minScale: 1,
-            boxSize: 0, boxX: 0, boxY: 0,
-            isDragging: false,
-            lastTouchX: 0, lastTouchY: 0,
-            initialPinchDist: 0, initialScale: 1
-        };
+        let cropState = { img: null, currentTeam: null, viewW: 0, viewH: 0, x: 0, y: 0, scale: 1, minScale: 1, boxSize: 0, boxX: 0, boxY: 0, isDragging: false, lastTouchX: 0, lastTouchY: 0, initialPinchDist: 0, initialScale: 1 };
 
-        function triggerUpload(team) {
-            document.getElementById(`file-input-${team}`).click();
-        }
+        function triggerUpload(team) { document.getElementById(`file-input-${team}`).click(); }
 
         function removeLogo(e, team) {
             e.stopPropagation();
-            if (team === 1) gameSettings.team1Logo = null;
-            else gameSettings.team2Logo = null;
-
-            // Reset Setup Preview
+            if (team === 1) gameSettings.team1Logo = null; else gameSettings.team2Logo = null;
             const img = document.getElementById(`preview-logo-${team}`);
             const icon = document.getElementById(`icon-logo-${team}`);
             const removeBtn = document.getElementById(`remove-logo-${team}`);
-            
-            img.src = '';
-            img.classList.add('hidden');
-            icon.classList.remove('hidden');
-            removeBtn.classList.add('hidden');
-
-            // Reset Scoreboard
+            img.src = ''; img.classList.add('hidden');
+            icon.classList.remove('hidden'); removeBtn.classList.add('hidden');
             const scoreImg = document.getElementById(`score-logo-${team}`);
-            scoreImg.src = '';
-            scoreImg.classList.add('hidden');
-            
-            // Clear input value
+            scoreImg.src = ''; scoreImg.classList.add('hidden');
             document.getElementById(`file-input-${team}`).value = '';
         }
 
@@ -595,96 +498,59 @@
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(evt) {
-                    const img = new Image();
-                    img.onload = () => initCropper(img, team);
-                    img.src = evt.target.result;
-                };
+                reader.onload = function(evt) { const img = new Image(); img.onload = () => initCropper(img, team); img.src = evt.target.result; };
                 reader.readAsDataURL(file);
             }
             e.target.value = ''; 
         }
 
         function initCropper(img, team) {
-            cropState.img = img;
-            cropState.currentTeam = team;
+            cropState.img = img; cropState.currentTeam = team;
             cropperModal.classList.remove('hidden-ui');
-            
             const container = document.getElementById('cropper-container');
-            cropState.viewW = container.clientWidth;
-            cropState.viewH = container.clientHeight;
-            
+            cropState.viewW = container.clientWidth; cropState.viewH = container.clientHeight;
             const dpr = window.devicePixelRatio || 1;
-            cropperCanvas.width = cropState.viewW * dpr;
-            cropperCanvas.height = cropState.viewH * dpr;
+            cropperCanvas.width = cropState.viewW * dpr; cropperCanvas.height = cropState.viewH * dpr;
             cropperCtx.scale(dpr, dpr);
-            cropperCanvas.style.width = cropState.viewW + 'px';
-            cropperCanvas.style.height = cropState.viewH + 'px';
-
+            cropperCanvas.style.width = cropState.viewW + 'px'; cropperCanvas.style.height = cropState.viewH + 'px';
             cropState.boxSize = Math.min(cropState.viewW, cropState.viewH) * 0.8;
-            cropState.boxX = (cropState.viewW - cropState.boxSize) / 2;
-            cropState.boxY = (cropState.viewH - cropState.boxSize) / 2;
-
-            cropperOverlay.style.width = cropState.boxSize + 'px';
-            cropperOverlay.style.height = cropState.boxSize + 'px';
-            cropperOverlay.style.left = cropState.boxX + 'px';
-            cropperOverlay.style.top = cropState.boxY + 'px';
-            
-            cropperGrid.style.width = cropState.boxSize + 'px';
-            cropperGrid.style.height = cropState.boxSize + 'px';
-            cropperGrid.style.left = cropState.boxX + 'px';
-            cropperGrid.style.top = cropState.boxY + 'px';
-
-            const scaleW = cropState.boxSize / img.width;
-            const scaleH = cropState.boxSize / img.height;
-            cropState.minScale = Math.max(scaleW, scaleH);
-            cropState.scale = cropState.minScale;
+            cropState.boxX = (cropState.viewW - cropState.boxSize) / 2; cropState.boxY = (cropState.viewH - cropState.boxSize) / 2;
+            cropperOverlay.style.width = cropState.boxSize + 'px'; cropperOverlay.style.height = cropState.boxSize + 'px';
+            cropperOverlay.style.left = cropState.boxX + 'px'; cropperOverlay.style.top = cropState.boxY + 'px';
+            cropperGrid.style.width = cropState.boxSize + 'px'; cropperGrid.style.height = cropState.boxSize + 'px';
+            cropperGrid.style.left = cropState.boxX + 'px'; cropperGrid.style.top = cropState.boxY + 'px';
+            const scaleW = cropState.boxSize / img.width; const scaleH = cropState.boxSize / img.height;
+            cropState.minScale = Math.max(scaleW, scaleH); cropState.scale = cropState.minScale;
             cropState.x = cropState.boxX + (cropState.boxSize - img.width * cropState.scale) / 2;
             cropState.y = cropState.boxY + (cropState.boxSize - img.height * cropState.scale) / 2;
-
             requestAnimationFrame(drawCropper);
         }
 
-        function cancelCrop() {
-            cropperModal.classList.add('hidden-ui');
-            cropState.img = null;
-        }
+        function cancelCrop() { cropperModal.classList.add('hidden-ui'); cropState.img = null; }
 
         function saveCrop() {
             if (!cropState.img) return;
             const srcX = (cropState.boxX - cropState.x) / cropState.scale;
             const srcY = (cropState.boxY - cropState.y) / cropState.scale;
             const srcSize = cropState.boxSize / cropState.scale; 
-            
             const outputCanvas = document.createElement('canvas');
-            const outputSize = 512; 
-            outputCanvas.width = outputSize;
-            outputCanvas.height = outputSize;
+            const outputSize = 512; outputCanvas.width = outputSize; outputCanvas.height = outputSize;
             const ctx = outputCanvas.getContext('2d');
-
             ctx.drawImage(cropState.img, srcX, srcY, srcSize, srcSize, 0, 0, outputSize, outputSize);
-
             const resultUrl = outputCanvas.toDataURL('image/png', 0.9);
             applyLogo(cropState.currentTeam, resultUrl);
             cancelCrop();
         }
 
         function applyLogo(team, dataUrl) {
-            if (team === 1) gameSettings.team1Logo = dataUrl;
-            else gameSettings.team2Logo = dataUrl;
-            
+            if (team === 1) gameSettings.team1Logo = dataUrl; else gameSettings.team2Logo = dataUrl;
             const img = document.getElementById(`preview-logo-${team}`);
             const icon = document.getElementById(`icon-logo-${team}`);
             const removeBtn = document.getElementById(`remove-logo-${team}`);
-            
-            img.src = dataUrl;
-            img.classList.remove('hidden');
-            icon.classList.add('hidden');
-            removeBtn.classList.remove('hidden');
-
+            img.src = dataUrl; img.classList.remove('hidden');
+            icon.classList.add('hidden'); removeBtn.classList.remove('hidden');
             const scoreImg = document.getElementById(`score-logo-${team}`);
-            scoreImg.src = dataUrl;
-            scoreImg.classList.remove('hidden');
+            scoreImg.src = dataUrl; scoreImg.classList.remove('hidden');
         }
 
         function drawCropper() {
@@ -694,17 +560,13 @@
         }
         
         function getDistance(touches) {
-            const dx = touches[0].clientX - touches[1].clientX;
-            const dy = touches[0].clientY - touches[1].clientY;
+            const dx = touches[0].clientX - touches[1].clientX; const dy = touches[0].clientY - touches[1].clientY;
             return Math.sqrt(dx * dx + dy * dy);
         }
 
         function constrain() {
-            const imgW = cropState.img.width * cropState.scale;
-            const imgH = cropState.img.height * cropState.scale;
-            const boxRight = cropState.boxX + cropState.boxSize;
-            const boxBottom = cropState.boxY + cropState.boxSize;
-            
+            const imgW = cropState.img.width * cropState.scale; const imgH = cropState.img.height * cropState.scale;
+            const boxRight = cropState.boxX + cropState.boxSize; const boxBottom = cropState.boxY + cropState.boxSize;
             if (cropState.x > cropState.boxX) cropState.x = cropState.boxX;
             if (cropState.y > cropState.boxY) cropState.y = cropState.boxY;
             if (cropState.x + imgW < boxRight) cropState.x = boxRight - imgW;
@@ -712,114 +574,68 @@
         }
 
         const container = document.getElementById('cropper-container');
-
         container.addEventListener('touchstart', (e) => {
-            if (e.touches.length === 1) {
-                cropState.isDragging = true;
-                cropState.lastTouchX = e.touches[0].clientX;
-                cropState.lastTouchY = e.touches[0].clientY;
-            } else if (e.touches.length === 2) {
-                cropState.isDragging = false; 
-                cropState.initialPinchDist = getDistance(e.touches);
-                cropState.initialScale = cropState.scale;
-            }
+            if (e.touches.length === 1) { cropState.isDragging = true; cropState.lastTouchX = e.touches[0].clientX; cropState.lastTouchY = e.touches[0].clientY; } 
+            else if (e.touches.length === 2) { cropState.isDragging = false; cropState.initialPinchDist = getDistance(e.touches); cropState.initialScale = cropState.scale; }
         });
-
         container.addEventListener('touchmove', (e) => {
-            e.preventDefault(); 
-            if (!cropState.img) return;
-
+            e.preventDefault(); if (!cropState.img) return;
             if (e.touches.length === 1 && cropState.isDragging) {
-                const dx = e.touches[0].clientX - cropState.lastTouchX;
-                const dy = e.touches[0].clientY - cropState.lastTouchY;
-                cropState.x += dx;
-                cropState.y += dy;
-                cropState.lastTouchX = e.touches[0].clientX;
-                cropState.lastTouchY = e.touches[0].clientY;
-                constrain();
-                requestAnimationFrame(drawCropper);
+                const dx = e.touches[0].clientX - cropState.lastTouchX; const dy = e.touches[0].clientY - cropState.lastTouchY;
+                cropState.x += dx; cropState.y += dy;
+                cropState.lastTouchX = e.touches[0].clientX; cropState.lastTouchY = e.touches[0].clientY;
+                constrain(); requestAnimationFrame(drawCropper);
             } else if (e.touches.length === 2) {
-                const dist = getDistance(e.touches);
-                const zoomFactor = dist / cropState.initialPinchDist;
-                const newScale = cropState.initialScale * zoomFactor;
-
+                const dist = getDistance(e.touches); const zoomFactor = dist / cropState.initialPinchDist; const newScale = cropState.initialScale * zoomFactor;
                 if (newScale >= cropState.minScale) {
-                    const centerX = (cropState.viewW/2 - cropState.x) / cropState.scale;
-                    const centerY = (cropState.viewH/2 - cropState.y) / cropState.scale;
+                    const centerX = (cropState.viewW/2 - cropState.x) / cropState.scale; const centerY = (cropState.viewH/2 - cropState.y) / cropState.scale;
                     cropState.scale = newScale;
-                    cropState.x = cropState.viewW/2 - (centerX * newScale);
-                    cropState.y = cropState.viewH/2 - (centerY * newScale);
-                    constrain();
-                    requestAnimationFrame(drawCropper);
+                    cropState.x = cropState.viewW/2 - (centerX * newScale); cropState.y = cropState.viewH/2 - (centerY * newScale);
+                    constrain(); requestAnimationFrame(drawCropper);
                 }
             }
         });
-
         container.addEventListener('touchend', () => { cropState.isDragging = false; });
-        container.addEventListener('mousedown', (e) => {
-            cropState.isDragging = true;
-            cropState.lastTouchX = e.clientX;
-            cropState.lastTouchY = e.clientY;
-        });
+        container.addEventListener('mousedown', (e) => { cropState.isDragging = true; cropState.lastTouchX = e.clientX; cropState.lastTouchY = e.clientY; });
         window.addEventListener('mousemove', (e) => {
             if (cropState.isDragging && cropState.img) {
-                const dx = e.clientX - cropState.lastTouchX;
-                const dy = e.clientY - cropState.lastTouchY;
-                cropState.x += dx;
-                cropState.y += dy;
-                cropState.lastTouchX = e.clientX;
-                cropState.lastTouchY = e.clientY;
-                constrain();
-                requestAnimationFrame(drawCropper);
+                const dx = e.clientX - cropState.lastTouchX; const dy = e.clientY - cropState.lastTouchY;
+                cropState.x += dx; cropState.y += dy;
+                cropState.lastTouchX = e.clientX; cropState.lastTouchY = e.clientY;
+                constrain(); requestAnimationFrame(drawCropper);
             }
         });
         window.addEventListener('mouseup', () => cropState.isDragging = false);
         container.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            if(!cropState.img) return;
-            const zoomChange = -e.deltaY * 0.001;
-            const newScale = cropState.scale * (1 + zoomChange);
+            e.preventDefault(); if(!cropState.img) return;
+            const zoomChange = -e.deltaY * 0.001; const newScale = cropState.scale * (1 + zoomChange);
             if (newScale >= cropState.minScale) {
-                const centerX = (cropState.viewW/2 - cropState.x) / cropState.scale;
-                const centerY = (cropState.viewH/2 - cropState.y) / cropState.scale;
+                const centerX = (cropState.viewW/2 - cropState.x) / cropState.scale; const centerY = (cropState.viewH/2 - cropState.y) / cropState.scale;
                 cropState.scale = newScale;
-                cropState.x = cropState.viewW/2 - (centerX * newScale);
-                cropState.y = cropState.viewH/2 - (centerY * newScale);
-                constrain();
-                requestAnimationFrame(drawCropper);
+                cropState.x = cropState.viewW/2 - (centerX * newScale); cropState.y = cropState.viewH/2 - (centerY * newScale);
+                constrain(); requestAnimationFrame(drawCropper);
             }
         });
 
-
-        // --- MAIN APP LOGIC ---
-
         function lockSettings(e) {
             if(e) e.stopPropagation();
-            
             gameSettings.team1 = document.getElementById('team1-input').value || "Home";
             gameSettings.team2 = document.getElementById('team2-input').value || "Away";
             const inputMatchTime = parseFloat(document.getElementById('match-time-input').value) || 45;
-            
             gameState.team1Score = parseInt(document.getElementById('team1-score-input').value) || 0;
             gameState.team2Score = parseInt(document.getElementById('team2-score-input').value) || 0;
-            
             if (inputMatchTime !== gameSettings.matchTime || (!gameSettings.locked && gameState.timeRemaining === 45*60)) {
                 gameState.timeRemaining = Math.floor(inputMatchTime * 60);
             }
             gameSettings.matchTime = inputMatchTime;
-
             gameSettings.locked = true;
-            
             document.getElementById('score-team1-name').innerText = gameSettings.team1;
             document.getElementById('score-team2-name').innerText = gameSettings.team2;
             document.getElementById('btn-team1-name').innerText = gameSettings.team1;
             document.getElementById('btn-team2-name').innerText = gameSettings.team2;
-            
             document.getElementById('score-team1-val').innerText = gameState.team1Score;
             document.getElementById('score-team2-val').innerText = gameState.team2Score;
-            
-            updateTimerDisplay();
-            updateUI();
+            updateTimerDisplay(); updateUI();
         }
 
         function toggleEditMode(e) {
@@ -829,66 +645,42 @@
             document.getElementById('team1-input').value = gameSettings.team1;
             document.getElementById('team2-input').value = gameSettings.team2;
             document.getElementById('match-time-input').value = gameSettings.matchTime;
-            gameSettings.locked = false;
-            updateUI();
+            gameSettings.locked = false; updateUI();
         }
 
         function toggleTimer(e) {
             if(e) e.stopPropagation();
             if (gameState.isRunning) {
-                clearInterval(gameState.timerInterval);
-                gameState.isRunning = false;
-                goBtn.classList.remove('btn-stop');
-                goBtn.classList.add('btn-start');
-                goBtn.innerText = "GO";
+                clearInterval(gameState.timerInterval); gameState.isRunning = false;
+                goBtn.classList.remove('btn-stop'); goBtn.classList.add('btn-start'); goBtn.innerText = "GO";
             } else {
                 gameState.isRunning = true;
-                goBtn.classList.remove('btn-start');
-                goBtn.classList.add('btn-stop');
-                goBtn.innerText = "STOP";
+                goBtn.classList.remove('btn-start'); goBtn.classList.add('btn-stop'); goBtn.innerText = "STOP";
                 gameState.timerInterval = setInterval(() => {
-                    if (gameState.timeRemaining > 0) {
-                        gameState.timeRemaining--;
-                        updateTimerDisplay();
-                    } else {
-                        if(gameState.isRunning) { toggleTimer(null); playWhistle(); }
-                    }
+                    if (gameState.timeRemaining > 0) { gameState.timeRemaining--; updateTimerDisplay(); } 
+                    else { if(gameState.isRunning) { toggleTimer(null); playWhistle(); } }
                 }, 1000);
             }
             updateUI(); 
         }
 
         function updateTimerDisplay() {
-            const m = Math.floor(gameState.timeRemaining / 60);
-            const s = gameState.timeRemaining % 60;
+            const m = Math.floor(gameState.timeRemaining / 60); const s = gameState.timeRemaining % 60;
             const timeString = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-            timerDisplay.innerText = timeString;
-            setupTimerDisplay.innerText = timeString;
+            timerDisplay.innerText = timeString; setupTimerDisplay.innerText = timeString;
         }
 
         function addGoal(team) {
-            if (team === 1) {
-                gameState.team1Score++;
-                document.getElementById('score-team1-val').innerText = gameState.team1Score;
-            } else {
-                gameState.team2Score++;
-                document.getElementById('score-team2-val').innerText = gameState.team2Score;
-            }
+            if (team === 1) { gameState.team1Score++; document.getElementById('score-team1-val').innerText = gameState.team1Score; } 
+            else { gameState.team2Score++; document.getElementById('score-team2-val').innerText = gameState.team2Score; }
         }
 
         function updateUI() {
             if (gameSettings.locked) {
-                setupView.classList.add('hidden-ui');
-                setupHeader.classList.add('hidden-ui');
-                confirmBtn.classList.add('hidden-ui');
-                gameView.classList.remove('hidden-ui');
+                setupView.classList.add('hidden-ui'); setupHeader.classList.add('hidden-ui'); confirmBtn.classList.add('hidden-ui'); gameView.classList.remove('hidden-ui');
             } else {
-                setupView.classList.remove('hidden-ui');
-                setupHeader.classList.remove('hidden-ui');
-                confirmBtn.classList.remove('hidden-ui');
-                gameView.classList.add('hidden-ui');
-                if (gameState.isRunning) setupTimerDisplay.classList.remove('hidden-ui');
-                else setupTimerDisplay.classList.add('hidden-ui');
+                setupView.classList.remove('hidden-ui'); setupHeader.classList.remove('hidden-ui'); confirmBtn.classList.remove('hidden-ui'); gameView.classList.add('hidden-ui');
+                if (gameState.isRunning) setupTimerDisplay.classList.remove('hidden-ui'); else setupTimerDisplay.classList.add('hidden-ui');
             }
         }
 
@@ -896,117 +688,49 @@
             const cards = getCards();
             cardDisplay.classList.remove('bg-red-600', 'bg-yellow-400', 'bg-zinc-900', 'bg-gray-100');
             cardDisplay.classList.add(cards[currentCardIndex]);
-            
-            if (currentCardIndex === 2) {
-                blueUi.classList.add('active-ui');
-            } else {
-                blueUi.classList.remove('active-ui');
-            }
+            if (currentCardIndex === 2) blueUi.classList.add('active-ui'); else blueUi.classList.remove('active-ui');
         }
 
         function cycleCard(direction) {
-            const cards = getCards();
-            currentCardIndex = (currentCardIndex + direction + cards.length) % cards.length;
+            const cards = getCards(); currentCardIndex = (currentCardIndex + direction + cards.length) % cards.length;
             updateCardDisplay();
         }
 
         function initAudio() {
-            if (!currentAudioContext) {
-                currentAudioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (currentAudioContext.state === 'suspended') {
-                currentAudioContext.resume();
-            }
+            if (!currentAudioContext) { currentAudioContext = new (window.AudioContext || window.webkitAudioContext)(); }
+            if (currentAudioContext.state === 'suspended') { currentAudioContext.resume(); }
         }
 
-        // --- UPDATED WHISTLE LOGIC ---
         let activeNodes = []; 
-
         function playWhistle() {
             initAudio();
-            
-            if (activeNodes.length > 0) {
-                activeNodes.forEach(node => {
-                    try { node.stop(); } catch(e) {}
-                    try { node.disconnect(); } catch(e) {}
-                });
-                activeNodes = [];
-            }
-
-            const ctx = currentAudioContext;
-            const t = ctx.currentTime;
-            const duration = 2.0; 
-
-            const osc = ctx.createOscillator();
-            const gainNode = ctx.createGain();
-            const modulator = ctx.createOscillator(); 
-            const modGain = ctx.createGain();
-
-            activeNodes.push(osc);
-            activeNodes.push(modulator);
-
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(2000, t); 
-            osc.frequency.setValueAtTime(2000, t + duration);
-            modulator.type = 'sine';
-            modulator.frequency.setValueAtTime(50, t); 
-            modGain.gain.setValueAtTime(150, t); 
-            
-            gainNode.gain.setValueAtTime(0, t);
-            gainNode.gain.linearRampToValueAtTime(0.3, t + 0.1); 
-            gainNode.gain.setValueAtTime(0.3, t + duration - 0.2); 
-            gainNode.gain.linearRampToValueAtTime(0, t + duration); 
-            
-            modulator.connect(modGain);
-            modGain.connect(osc.frequency); 
-            osc.connect(gainNode);
-            gainNode.connect(ctx.destination);
-            
-            osc.start(t);
-            modulator.start(t);
-            osc.stop(t + duration);
-            modulator.stop(t + duration);
-            
-            osc.onended = () => {
-                const index = activeNodes.indexOf(osc);
-                if (index > -1) activeNodes.splice(index, 1);
-            };
+            if (activeNodes.length > 0) { activeNodes.forEach(node => { try { node.stop(); } catch(e) {} try { node.disconnect(); } catch(e) {} }); activeNodes = []; }
+            const ctx = currentAudioContext; const t = ctx.currentTime; const duration = 2.0; 
+            const osc = ctx.createOscillator(); const gainNode = ctx.createGain(); const modulator = ctx.createOscillator(); const modGain = ctx.createGain();
+            activeNodes.push(osc); activeNodes.push(modulator);
+            osc.type = 'sine'; osc.frequency.setValueAtTime(2000, t); osc.frequency.setValueAtTime(2000, t + duration);
+            modulator.type = 'sine'; modulator.frequency.setValueAtTime(50, t); modGain.gain.setValueAtTime(150, t); 
+            gainNode.gain.setValueAtTime(0, t); gainNode.gain.linearRampToValueAtTime(0.3, t + 0.1); gainNode.gain.setValueAtTime(0.3, t + duration - 0.2); gainNode.gain.linearRampToValueAtTime(0, t + duration); 
+            modulator.connect(modGain); modGain.connect(osc.frequency); osc.connect(gainNode); gainNode.connect(ctx.destination);
+            osc.start(t); modulator.start(t); osc.stop(t + duration); modulator.stop(t + duration);
+            osc.onended = () => { const index = activeNodes.indexOf(osc); if (index > -1) activeNodes.splice(index, 1); };
         }
 
         let startX = 0, startY = 0, startTime = 0;
-        const SWIPE_THRESHOLD = 50; 
-        const TAP_THRESHOLD = 10; 
-
-        const handleStart = (x, y) => {
-            startX = x; startY = y; startTime = Date.now();
-        };
-
+        const SWIPE_THRESHOLD = 50; const TAP_THRESHOLD = 10; 
+        const handleStart = (x, y) => { startX = x; startY = y; startTime = Date.now(); };
         const handleEnd = (x, y, target) => {
             if (target.closest('input') || target.closest('button') || target.closest('.logo-upload-preview') || document.getElementById('cropper-modal').contains(target)) return;
-            const diffX = x - startX;
-            const diffY = y - startY;
-            const absDiffX = Math.abs(diffX);
-            const absDiffY = Math.abs(diffY);
-            if (absDiffX > SWIPE_THRESHOLD && absDiffX > absDiffY) {
-                if (diffX > 0) cycleCard(-1);
-                else cycleCard(1);
-            } else if (absDiffX < TAP_THRESHOLD && absDiffY < TAP_THRESHOLD) {
-                playWhistle();
-            }
+            const diffX = x - startX; const diffY = y - startY; const absDiffX = Math.abs(diffX); const absDiffY = Math.abs(diffY);
+            if (absDiffX > SWIPE_THRESHOLD && absDiffX > absDiffY) { if (diffX > 0) cycleCard(-1); else cycleCard(1); } 
+            else if (absDiffX < TAP_THRESHOLD && absDiffY < TAP_THRESHOLD) { playWhistle(); }
         };
 
-        cardDisplay.addEventListener('touchstart', (e) => {
-            handleStart(e.changedTouches[0].screenX, e.changedTouches[0].screenY);
-        }, { passive: false });
-        cardDisplay.addEventListener('touchend', (e) => {
-            handleEnd(e.changedTouches[0].screenX, e.changedTouches[0].screenY, e.target);
-        }, { passive: false });
+        cardDisplay.addEventListener('touchstart', (e) => handleStart(e.changedTouches[0].screenX, e.changedTouches[0].screenY), { passive: false });
+        cardDisplay.addEventListener('touchend', (e) => handleEnd(e.changedTouches[0].screenX, e.changedTouches[0].screenY, e.target), { passive: false });
         cardDisplay.addEventListener('mousedown', (e) => handleStart(e.screenX, e.screenY));
         cardDisplay.addEventListener('mouseup', (e) => handleEnd(e.screenX, e.screenY, e.target));
         window.addEventListener('contextmenu', event => event.preventDefault());
-
     </script>
 </body>
 </html>
-
-
