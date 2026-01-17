@@ -476,7 +476,8 @@
                     <div id="result-text" class="text-3xl font-black text-white italic tracking-widest uppercase text-center drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]"></div>
                 </div>
 
-                <div class="scoreboard-cage rounded-2xl p-6 flex flex-col items-center justify-center shadow-2xl border-2 border-slate-700 bg-black transition-colors duration-500" onclick="stopProp(event)">
+                <!-- Removed onclick="stopProp(event)" to allow tapping the scoreboard to whistle -->
+                <div class="scoreboard-cage rounded-2xl p-6 flex flex-col items-center justify-center shadow-2xl border-2 border-slate-700 bg-black transition-colors duration-500">
                     
                     <!-- Halftime Popup -->
                     <div id="halftime-popup" class="flex flex-col items-center">
@@ -505,11 +506,12 @@
                     <div id="timer-display" class="font-digital text-6xl text-white tracking-widest tabular-nums leading-none font-bold transition-colors duration-500">00:00</div>
                 </div>
 
-                <div class="flex justify-center py-2" onclick="stopProp(event)">
+                <!-- Removed onclick="stopProp(event)" from wrappers to improve touch responsiveness -->
+                <div class="flex justify-center py-2">
                     <button id="go-btn" class="w-20 h-20 rounded-full btn-start flex items-center justify-center transition-all text-white font-black text-xl tracking-widest" onclick="toggleTimer(event)">GO</button>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4 mt-auto" onclick="stopProp(event)">
+                <div class="grid grid-cols-2 gap-4 mt-auto">
                     <button class="btn-goal btn-goal-home rounded-2xl h-24 flex flex-col items-center justify-center backdrop-blur-sm" onclick="addGoal(1)">
                         <span class="text-white text-base font-bold tracking-widest mb-1">GOAL</span>
                         <span id="btn-team1-name" class="text-blue-400 text-sm font-medium truncate max-w-[90%] opacity-80">Home</span>
@@ -749,13 +751,12 @@
             // We update this so if the user resets later, it uses the new time.
             gameState.halfLength = Math.floor((inputMatchTime / 2) * 60);
 
-            // NOTE: We do NOT reset the timer here anymore. 
-            // Pressing "Check" simply saves values and locks the UI.
-            // To reset the timer, the user must press the "Refresh/New Match" button.
-            
-            // However, if the game hasn't started (Period 1, Time = old half length), 
-            // and we changed time, we might want to update it? 
-            // For now, sticking to strict "Edit doesn't restart" rule.
+            // FIX: Force update timer if game hasn't started (Period 1, not running)
+            // This ensures the green check mark works on the first try without needing a restart
+            if (gameState.currentPeriod === 1 && !gameState.isRunning) {
+                 gameState.timeRemaining = gameState.halfLength;
+                 updateTimerDisplay();
+            }
             
             // Check if Halftime Duration changed WHILE in halftime
             if (gameState.isHalftime && inputHalfTime !== gameSettings.halfTime) {
