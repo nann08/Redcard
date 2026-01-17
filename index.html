@@ -298,22 +298,36 @@
             box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
         }
 
-        /* Results Screen Styles */
-        .winner-card {
-            transform: scale(1.15);
-            opacity: 1;
+        /* Results Animations on Scoreboard */
+        .score-val {
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .score-winner {
+            transform: scale(1.6);
+            text-shadow: 0 0 40px currentColor;
             z-index: 10;
         }
-        
-        .loser-card {
-            transform: scale(0.85);
-            opacity: 0.6;
-            z-index: 5;
+
+        .score-loser {
+            opacity: 0.3;
+            transform: scale(0.8);
+            filter: grayscale(0.5);
         }
         
-        .draw-card {
-            transform: scale(1);
+        .score-draw {
+            text-shadow: 0 0 20px currentColor;
+        }
+
+        #result-announcement {
+            transition: all 0.5s ease-out;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        #result-announcement.visible {
             opacity: 1;
+            transform: translateY(0);
         }
 
         #cropper-modal { touch-action: none; }
@@ -455,8 +469,13 @@
             </div>
 
             <!-- Game View -->
-            <div id="game-view" class="flex-1 flex flex-col hidden-ui z-10 space-y-6">
+            <div id="game-view" class="flex-1 flex flex-col hidden-ui z-10 space-y-4">
                 
+                <!-- Result Announcement (Above Scoreboard) -->
+                <div id="result-announcement" class="h-8 flex items-end justify-center">
+                    <div id="result-text" class="text-3xl font-black text-white italic tracking-widest uppercase text-center drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]"></div>
+                </div>
+
                 <div class="scoreboard-cage rounded-2xl p-6 flex flex-col items-center justify-center shadow-2xl border-2 border-slate-700 bg-black transition-colors duration-500" onclick="stopProp(event)">
                     
                     <!-- Halftime Popup -->
@@ -468,13 +487,13 @@
                         <div class="text-center flex-1 flex flex-col items-center">
                             <img id="score-logo-1" class="scoreboard-logo hidden" src="">
                             <div id="score-team1-name" class="text-blue-400 text-sm font-black tracking-wider uppercase mb-1 truncate px-1 max-w-[120px]">Home</div>
-                            <div id="score-team1-val" class="font-digital text-5xl text-blue-400 leading-none mt-1">0</div>
+                            <div id="score-team1-val" class="score-val font-digital text-5xl text-blue-400 leading-none mt-1 origin-center">0</div>
                         </div>
                         <div class="h-16 w-px bg-slate-800 mx-2 mt-4"></div>
                         <div class="text-center flex-1 flex flex-col items-center">
                             <img id="score-logo-2" class="scoreboard-logo hidden" src="">
                             <div id="score-team2-name" class="text-red-400 text-sm font-black tracking-wider uppercase mb-1 truncate px-1 max-w-[120px]">Away</div>
-                            <div id="score-team2-val" class="font-digital text-5xl text-red-400 leading-none mt-1">0</div>
+                            <div id="score-team2-val" class="score-val font-digital text-5xl text-red-400 leading-none mt-1 origin-center">0</div>
                         </div>
                     </div>
 
@@ -502,38 +521,8 @@
                 </div>
 
             </div>
-
-            <!-- Results View -->
-            <div id="results-view" class="absolute inset-0 z-50 flex flex-col items-center justify-center hidden-ui bg-black/80 backdrop-blur-md p-6" onclick="stopProp(event)">
-                <h1 id="result-title" class="text-4xl font-black text-white italic tracking-widest uppercase text-center drop-shadow-[0_0_15px_rgba(255,255,255,0.5)] mb-10 animate-bounce">HOME WINS</h1>
-                
-                <div class="flex items-center justify-center gap-2 w-full mb-12">
-                    <!-- Team 1 Result -->
-                    <div id="result-card-1" class="flex flex-col items-center transition-all duration-700 ease-in-out">
-                        <div class="relative mb-4">
-                            <img id="result-logo-1" src="" class="w-24 h-24 rounded-full object-cover border-4 border-transparent shadow-2xl bg-gray-800">
-                        </div>
-                        <h2 id="result-name-1" class="text-lg font-bold text-blue-400 uppercase tracking-wider mb-2 max-w-[120px] truncate">Home</h2>
-                        <div id="result-score-1" class="font-digital text-6xl text-white leading-none">2</div>
-                    </div>
-
-                    <div class="text-slate-600 font-black text-2xl px-2 italic">VS</div>
-
-                    <!-- Team 2 Result -->
-                    <div id="result-card-2" class="flex flex-col items-center transition-all duration-700 ease-in-out">
-                        <div class="relative mb-4">
-                            <img id="result-logo-2" src="" class="w-24 h-24 rounded-full object-cover border-4 border-transparent shadow-2xl bg-gray-800">
-                        </div>
-                        <h2 id="result-name-2" class="text-lg font-bold text-red-400 uppercase tracking-wider mb-2 max-w-[120px] truncate">Away</h2>
-                        <div id="result-score-2" class="font-digital text-6xl text-white leading-none">1</div>
-                    </div>
-                </div>
-
-                <button onclick="resetGame()" class="group relative px-8 py-4 bg-white text-black font-black text-xl rounded-full uppercase tracking-widest shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:scale-105 active:scale-95 transition-all overflow-hidden">
-                    <span class="relative z-10">New Match</span>
-                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
-                </button>
-            </div>
+            
+            <!-- Removed Old Results View -->
 
         </div>
     </div>
@@ -913,20 +902,14 @@
                 setupHeader.classList.add('hidden-ui'); 
                 confirmBtn.classList.add('hidden-ui'); 
                 restartBtn.classList.add('hidden'); // Hide New Match button in Game Mode
-                
-                if (gameState.currentPeriod === 3) {
-                    gameView.classList.add('hidden-ui');
-                    resultsView.classList.remove('hidden-ui');
-                } else {
-                    gameView.classList.remove('hidden-ui');
-                    resultsView.classList.add('hidden-ui');
-                }
+                gameView.classList.remove('hidden-ui');
+                // Removed resultsView logic
             } else {
                 setupView.classList.remove('hidden-ui'); 
                 setupHeader.classList.remove('hidden-ui'); 
                 confirmBtn.classList.remove('hidden-ui'); 
                 gameView.classList.add('hidden-ui'); 
-                resultsView.classList.add('hidden-ui');
+                // Removed resultsView logic
                 restartBtn.classList.remove('hidden'); // Show New Match button in Edit Mode
 
                 if (gameState.isRunning) setupTimerDisplay.classList.remove('hidden-ui'); else setupTimerDisplay.classList.add('hidden-ui');
@@ -934,49 +917,35 @@
         }
 
         function showResults() {
-            // Populate Data
-            document.getElementById('result-name-1').innerText = gameSettings.team1;
-            document.getElementById('result-name-2').innerText = gameSettings.team2;
-            document.getElementById('result-score-1').innerText = gameState.team1Score;
-            document.getElementById('result-score-2').innerText = gameState.team2Score;
-            
-            // Handle Logos (use placeholder if empty)
-            const logo1 = document.getElementById('result-logo-1');
-            const logo2 = document.getElementById('result-logo-2');
-            
-            // We reuse the preview/uploaded logic or fallback to a colored circle logic? 
-            // Better to use the src from the scoreboard images or the base64 stored.
-            logo1.src = gameSettings.team1Logo || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2360a5fa' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3C/svg%3E";
-            logo2.src = gameSettings.team2Logo || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f87171' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3C/svg%3E";
-
             // Determine Winner
-            const card1 = document.getElementById('result-card-1');
-            const card2 = document.getElementById('result-card-2');
-            const title = document.getElementById('result-title');
-            
-            // Reset Classes
-            card1.classList.remove('winner-card', 'loser-card', 'draw-card');
-            card2.classList.remove('winner-card', 'loser-card', 'draw-card');
+            const announcement = document.getElementById('result-announcement');
+            const resultText = document.getElementById('result-text');
+            const score1 = document.getElementById('score-team1-val');
+            const score2 = document.getElementById('score-team2-val');
+
+            // Reset specific classes
+            score1.classList.remove('score-winner', 'score-loser', 'score-draw');
+            score2.classList.remove('score-winner', 'score-loser', 'score-draw');
 
             if (gameState.team1Score > gameState.team2Score) {
-                title.innerText = `${gameSettings.team1} WINS!`;
-                title.style.color = '#60a5fa'; // Blue
-                card1.classList.add('winner-card');
-                card2.classList.add('loser-card');
+                resultText.innerText = `${gameSettings.team1} WINS`;
+                resultText.style.color = '#60a5fa'; // Blue
+                score1.classList.add('score-winner');
+                score2.classList.add('score-loser');
             } else if (gameState.team2Score > gameState.team1Score) {
-                title.innerText = `${gameSettings.team2} WINS!`;
-                title.style.color = '#f87171'; // Red
-                card2.classList.add('winner-card');
-                card1.classList.add('loser-card');
+                resultText.innerText = `${gameSettings.team2} WINS`;
+                resultText.style.color = '#f87171'; // Red
+                score2.classList.add('score-winner');
+                score1.classList.add('score-loser');
             } else {
-                title.innerText = "DRAW";
-                title.style.color = '#fbbf24'; // Gold
-                card1.classList.add('draw-card');
-                card2.classList.add('draw-card');
+                resultText.innerText = "DRAW";
+                resultText.style.color = '#fbbf24'; // Gold
+                score1.classList.add('score-draw');
+                score2.classList.add('score-draw');
             }
             
-            lucide.createIcons(); // Refresh icons for trophy
-            updateUI();
+            announcement.classList.add('visible');
+            document.getElementById('period-display').innerText = "FULL TIME";
         }
 
         function resetGame() {
@@ -999,6 +968,13 @@
             // Reset Scoreboard UI
             document.getElementById('score-team1-val').innerText = 0;
             document.getElementById('score-team2-val').innerText = 0;
+            
+            // Reset Visuals
+            const score1 = document.getElementById('score-team1-val');
+            const score2 = document.getElementById('score-team2-val');
+            score1.classList.remove('score-winner', 'score-loser', 'score-draw');
+            score2.classList.remove('score-winner', 'score-loser', 'score-draw');
+            document.getElementById('result-announcement').classList.remove('visible');
             
             goBtn.classList.remove('btn-stop'); goBtn.classList.add('btn-start'); 
             goBtn.innerText = "GO";
