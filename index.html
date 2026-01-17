@@ -53,6 +53,7 @@
             transition: background-color 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
+        /* Blue UI Container */
         #blue-ui {
             transition: opacity 0.3s ease-out, visibility 0.3s linear;
             opacity: 0;
@@ -232,7 +233,8 @@
         #blue-ui.light-mode #setup-header h2 { color: #4b5563; }
         #blue-ui.light-mode #setup-timer-display { color: #111827; }
         #blue-ui.light-mode #edit-btn, 
-        #blue-ui.light-mode #theme-btn {
+        #blue-ui.light-mode #theme-btn,
+        #blue-ui.light-mode #restart-btn {
             background-color: #e2e8f0;
             border-color: #cbd5e1;
             color: #475569;
@@ -303,8 +305,6 @@
             z-index: 10;
         }
         
-        /* Removed green border and trophy styles */
-
         .loser-card {
             transform: scale(0.85);
             opacity: 0.6;
@@ -366,6 +366,9 @@
                     </button>
                     <button id="theme-btn" class="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center btn-premium border border-slate-700 text-slate-300 hover:text-white" onclick="toggleTheme(event)">
                         <i data-lucide="moon" class="w-4 h-4"></i>
+                    </button>
+                    <button id="restart-btn" class="hidden w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center btn-premium border border-slate-700 text-slate-300 hover:text-white" onclick="confirmReset(event)">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
                     </button>
                 </div>
                 
@@ -753,21 +756,17 @@
             gameState.team1Score = parseInt(document.getElementById('team1-score-input').value) || 0;
             gameState.team2Score = parseInt(document.getElementById('team2-score-input').value) || 0;
             
-            // If settings are unlocked, or time changed, reset the game state basics
-            if (inputMatchTime !== gameSettings.matchTime || !gameSettings.locked) {
-                // Calculate length of one half (Input is TOTAL duration)
-                gameState.halfLength = Math.floor((inputMatchTime / 2) * 60);
-                
-                // Only reset time if we aren't in the middle of a specific paused state we want to keep
-                // For simplicity, unlocking settings resets the current period timer
-                gameState.timeRemaining = gameState.halfLength;
-                gameState.currentPeriod = 1;
-                gameState.isHalftime = false;
-                
-                halftimePopup.classList.remove('active');
-                gameView.classList.remove('halftime-active');
-                updatePeriodDisplay();
-            }
+            // Calculate length of one half based on input (Input is TOTAL duration)
+            // We update this so if the user resets later, it uses the new time.
+            gameState.halfLength = Math.floor((inputMatchTime / 2) * 60);
+
+            // NOTE: We do NOT reset the timer here anymore. 
+            // Pressing "Check" simply saves values and locks the UI.
+            // To reset the timer, the user must press the "Refresh/New Match" button.
+            
+            // However, if the game hasn't started (Period 1, Time = old half length), 
+            // and we changed time, we might want to update it? 
+            // For now, sticking to strict "Edit doesn't restart" rule.
             
             // Check if Halftime Duration changed WHILE in halftime
             if (gameState.isHalftime && inputHalfTime !== gameSettings.halfTime) {
@@ -785,7 +784,13 @@
             document.getElementById('btn-team2-name').innerText = gameSettings.team2;
             document.getElementById('score-team1-val').innerText = gameState.team1Score;
             document.getElementById('score-team2-val').innerText = gameState.team2Score;
-            updateTimerDisplay(); updateUI();
+            
+            // If we are in setup mode (hidden game view), ensure period display is correct
+            if (gameState.currentPeriod === 1 && !gameState.isRunning && gameState.timeRemaining === gameState.halfLength) {
+                 updateTimerDisplay();
+            }
+
+            updateUI();
         }
 
         function toggleEditMode(e) {
@@ -797,6 +802,12 @@
             document.getElementById('match-time-input').value = gameSettings.matchTime;
             document.getElementById('half-time-input').value = gameSettings.halfTime;
             gameSettings.locked = false; updateUI();
+        }
+        
+        function confirmReset(e) {
+            if(e) e.stopPropagation();
+            // In a real app we might ask for confirmation, but for now we just reset
+            resetGame();
         }
 
         function updatePeriodDisplay() {
@@ -895,10 +906,13 @@
         }
 
         function updateUI() {
+            const restartBtn = document.getElementById('restart-btn');
+            
             if (gameSettings.locked) {
                 setupView.classList.add('hidden-ui'); 
                 setupHeader.classList.add('hidden-ui'); 
                 confirmBtn.classList.add('hidden-ui'); 
+                restartBtn.classList.add('hidden'); // Hide New Match button in Game Mode
                 
                 if (gameState.currentPeriod === 3) {
                     gameView.classList.add('hidden-ui');
@@ -908,7 +922,13 @@
                     resultsView.classList.add('hidden-ui');
                 }
             } else {
-                setupView.classList.remove('hidden-ui'); setupHeader.classList.remove('hidden-ui'); confirmBtn.classList.remove('hidden-ui'); gameView.classList.add('hidden-ui'); resultsView.classList.add('hidden-ui');
+                setupView.classList.remove('hidden-ui'); 
+                setupHeader.classList.remove('hidden-ui'); 
+                confirmBtn.classList.remove('hidden-ui'); 
+                gameView.classList.add('hidden-ui'); 
+                resultsView.classList.add('hidden-ui');
+                restartBtn.classList.remove('hidden'); // Show New Match button in Edit Mode
+
                 if (gameState.isRunning) setupTimerDisplay.classList.remove('hidden-ui'); else setupTimerDisplay.classList.add('hidden-ui');
             }
         }
@@ -960,6 +980,9 @@
         }
 
         function resetGame() {
+            // Stop any running timer
+            if (gameState.timerInterval) clearInterval(gameState.timerInterval);
+            
             // Unlock settings and reset basic state
             gameSettings.locked = false;
             gameState.team1Score = 0;
